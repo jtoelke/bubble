@@ -32,6 +32,10 @@ exports = Class(ui.View, function (supr) {
 	this.build = function () {
 		this.on('app:start', start_game_flow.bind(this));
 
+		this.on('InputSelect', function (event, point) {
+			console.log("View clicked at position: " + point.x + "," + point.y);
+		});
+
 		var cannon_base_x =  576/2 - cannon_base_img.getWidth()/2;
 		var cannon_base_y = 1024 - cannon_base_img.getHeight();
 		var cannon_top_x =  576/2 - cannon_top_img.getWidth()/2;
