@@ -32,6 +32,11 @@ exports = Class(ui.View, function (supr) {
 	this.build = function () {
 		this.on('app:start', start_game_flow.bind(this));
 
+		var cannon_base_x =  576/2 - cannon_base_img.getWidth()/2;
+		var cannon_base_y = 1024 - cannon_base_img.getHeight();
+		var cannon_top_x =  576/2 - cannon_top_img.getWidth()/2;
+		var cannon_top_y = 1024 - cannon_base_img.getHeight() - cannon_top_img.getHeight() + 40;
+
 		this._ceiling = new ui.ImageView({
 			superview: this,
 			image: ceiling_img,
@@ -43,16 +48,16 @@ exports = Class(ui.View, function (supr) {
 		this._cannon_base = new ui.ImageView({
 			superview: this,
 			image: cannon_base_img,
-			x: 576/2 - cannon_base_img.getWidth()/2,
-			y: 1024 - cannon_base_img.getHeight(),
+			x: cannon_base_x,
+			y: cannon_base_y,
 			width: cannon_base_img.getWidth(),
 			height: cannon_base_img.getHeight()
 		});
 		this._cannon_top = new ui.ImageView({
 			superview: this,
 			image: cannon_top_img,
-			x: 576/2 - cannon_top_img.getWidth()/2,
-			y: 1024 - cannon_base_img.getHeight() - cannon_top_img.getHeight() + 40,
+			x: cannon_top_x,
+			y: cannon_top_y,
 			width: cannon_top_img.getWidth(),
 			height: cannon_top_img.getHeight()
 		});
@@ -84,6 +89,24 @@ exports = Class(ui.View, function (supr) {
 				this._bubbles.push(bubble);
 			}
 		}
+
+		this._current_bubble = new ui.ImageView({
+								superview: this,
+								image: bubble_img,
+								x: cannon_top_x + cannon_top_img.getWidth()/2 - bubble_size/2,
+								y: cannon_top_y + 2*cannon_top_img.getHeight()/3 - bubble_size/2,
+								width: bubble_size,
+								height: bubble_size
+							});
+
+		this._next_bubble = new ui.ImageView({
+								superview: this,
+								image: bubble_img,
+								x: cannon_base_x + cannon_base_img.getWidth()/2 - bubble_size/2,
+								y: cannon_base_y + 0.6*cannon_base_img.getHeight() - bubble_size/2,
+								width: bubble_size,
+								height: bubble_size
+							});
 	};
 });
 
