@@ -34,6 +34,16 @@ var x_offset = -16,
 	x_offset_even = wall_width + bubble_size/2,
 	y_offset = ceiling_img.getHeight() - bubble_size/2;
 
+var cannon_base_x =  app_width/2 - cannon_base_img.getWidth()/2,
+	cannon_base_y = app_height - cannon_base_img.getHeight(),
+	cannon_top_x =  app_width/2 - cannon_top_img.getWidth()/2,
+	cannon_top_y = bottom;
+
+var current_bubble_x = cannon_top_x + cannon_top_img.getWidth()/2 - bubble_size/2,
+	current_bubble_y = cannon_top_y + 2*cannon_top_img.getHeight()/3 - bubble_size/2,
+	next_bubble_x = cannon_base_x + cannon_base_img.getWidth()/2 - bubble_size/2,
+	next_bubble_y = cannon_base_y + 0.6*cannon_base_img.getHeight() - bubble_size/2;
+
 exports = Class(ui.View, function (supr) {
 	this.init = function (opts) {
 		opts = merge(opts, {
@@ -56,11 +66,6 @@ exports = Class(ui.View, function (supr) {
 			var animator = animate(this._current_bubble);
 			animate(this._current_bubble).now({x: point.x, y: point.y}, 500);
 		});
-
-		var cannon_base_x =  app_width/2 - cannon_base_img.getWidth()/2;
-		var cannon_base_y = app_height - cannon_base_img.getHeight();
-		var cannon_top_x =  app_width/2 - cannon_top_img.getWidth()/2;
-		var cannon_top_y = bottom;
 
 		this._ceiling = new ui.ImageView({
 			superview: this,
@@ -107,8 +112,8 @@ exports = Class(ui.View, function (supr) {
 		this._current_bubble = new ui.ImageView({
 								superview: this,
 								image: bubble_img,
-								x: cannon_top_x + cannon_top_img.getWidth()/2 - bubble_size/2,
-								y: cannon_top_y + 2*cannon_top_img.getHeight()/3 - bubble_size/2,
+								x: current_bubble_x,
+								y: current_bubble_y,
 								width: bubble_size,
 								height: bubble_size
 							});
@@ -116,8 +121,8 @@ exports = Class(ui.View, function (supr) {
 		this._next_bubble = new ui.ImageView({
 								superview: this,
 								image: bubble_img,
-								x: cannon_base_x + cannon_base_img.getWidth()/2 - bubble_size/2,
-								y: cannon_base_y + 0.6*cannon_base_img.getHeight() - bubble_size/2,
+								x: next_bubble_x,
+								y: next_bubble_y,
 								width: bubble_size,
 								height: bubble_size
 							});
