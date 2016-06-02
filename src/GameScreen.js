@@ -34,6 +34,8 @@ exports = Class(ui.View, function (supr) {
 
 		this.on('InputSelect', function (event, point) {
 			console.log("View clicked at position: " + point.x + "," + point.y);
+			var animator = animate(this._current_bubble);
+			animate(this._current_bubble).now({x: point.x, y: point.y}, 500);
 		});
 
 		var cannon_base_x =  576/2 - cannon_base_img.getWidth()/2;
