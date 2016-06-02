@@ -63,8 +63,40 @@ exports = Class(ui.View, function (supr) {
 
 		this.on('InputSelect', function (event, point) {
 			console.log("View clicked at position: " + point.x + "," + point.y);
-			var animator = animate(this._current_bubble);
-			animate(this._current_bubble).now({x: point.x, y: point.y}, 500);
+			if (point.y < bottom) {
+				var dest_x = point.x;
+				var dest_y = point.y;
+
+				var bubble_y = this._current_bubble.style.y + bubble_size/2;
+				var bubble_x = this._current_bubble.style.x + bubble_size/2;
+
+				var slope = (point.y - bubble_y) / (point.x - bubble_x);
+				var con = point.y - slope * point.x;
+				if (point.x < app_width/2) {		// tapped in the left half of the screen
+					console.log("Left wall.");
+					dest_y = slope * left_wall + con;
+					if (dest_y > ceiling) {
+						dest_x = left_wall;
+					}
+				} else if (point.x > app_width/2) {	// tapped in the right half of the screen
+					console.log("Right wall.");
+					dest_y = slope * right_wall + con;
+					if (dest_y > ceiling) {
+						dest_x = right_wall;
+					}
+				}
+				if (dest_x == point.x) {				// hitting ceiling
+					console.log("Ceiling.");
+					dest_y = ceiling;
+					dest_x = (ceiling - con) / slope;
+				}
+
+				dest_x = dest_x - bubble_size/2;
+				dest_y = dest_y - bubble_size/2;
+				console.log("Destination calculated as : " + dest_x + "," + dest_y);
+				var animator = animate(this._current_bubble);
+				animate(this._current_bubble).now({x: dest_x, y: dest_y}, 500).then({x: current_bubble_x, y: current_bubble_y}, 500);
+			}
 		});
 
 		this._ceiling = new ui.ImageView({
