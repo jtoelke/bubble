@@ -15,13 +15,32 @@ var ceiling_img = new Image({url: "resources/images/ui/bg1_header.png"}),
 	cannon_top_img = new Image({url: "resources/images/ui/cannon_top.png"}),
 	bubble_img = new Image({url: "resources/images/bubbles/ball_blue.png"});
 
+var app_width = 576,
+	app_height = 1024;
+
+var row_length = 9,
+	row_amount = 5;
+
+var wall_width = 64,
+	left_wall = wall_width,
+	right_wall = app_width - wall_width,
+	ceiling = ceiling_img.getHeight(),
+	bottom = app_height - cannon_base_img.getHeight() - cannon_top_img.getHeight() + 40;
+
+var x_offset = -16,
+	board_length = ceiling_img.getWidth() - 2*wall_width,
+	bubble_size = board_length/(row_length - 2), // use -2 to have bubbles slightly overlapping
+	bubble_distance = board_length / row_length,
+	x_offset_even = wall_width + bubble_size/2,
+	y_offset = ceiling_img.getHeight() - bubble_size/2;
+
 exports = Class(ui.View, function (supr) {
 	this.init = function (opts) {
 		opts = merge(opts, {
 			x: 0,
 			y: 0,
-			width: 576,
-			height: 1024,
+			width: app_width,
+			height: app_height,
 		});
 
 		supr(this, 'init', [opts]);
@@ -38,10 +57,10 @@ exports = Class(ui.View, function (supr) {
 			animate(this._current_bubble).now({x: point.x, y: point.y}, 500);
 		});
 
-		var cannon_base_x =  576/2 - cannon_base_img.getWidth()/2;
-		var cannon_base_y = 1024 - cannon_base_img.getHeight();
-		var cannon_top_x =  576/2 - cannon_top_img.getWidth()/2;
-		var cannon_top_y = 1024 - cannon_base_img.getHeight() - cannon_top_img.getHeight() + 40;
+		var cannon_base_x =  app_width/2 - cannon_base_img.getWidth()/2;
+		var cannon_base_y = app_height - cannon_base_img.getHeight();
+		var cannon_top_x =  app_width/2 - cannon_top_img.getWidth()/2;
+		var cannon_top_y = bottom;
 
 		this._ceiling = new ui.ImageView({
 			superview: this,
@@ -67,17 +86,6 @@ exports = Class(ui.View, function (supr) {
 			width: cannon_top_img.getWidth(),
 			height: cannon_top_img.getHeight()
 		});
-
-		var pad = 2;
-		var row_length = 9;
-		var row_amount = 5;
-		var wall_width = 64;
-		var x_offset = -16;
-		var board_length = ceiling_img.getWidth() - 2*wall_width;
-		var bubble_size = board_length/(row_length - pad);
-		var bubble_distance = board_length / row_length;
-		var x_offset_even = wall_width + bubble_size/2;
-		var y_offset = ceiling_img.getHeight() - bubble_size/2;
 
 		this._bubbles = [];
 

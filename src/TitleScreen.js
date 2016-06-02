@@ -5,6 +5,8 @@ import ui.TextView;
 import ui.resource.Image as Image;
 
 var ceiling_img = new Image({url: "resources/images/ui/bg1_header.png"});
+var app_width = 576,
+	app_height = 1024;
 
 exports = Class(ui.ImageView, function (supr) {
 	this.init = function (opts) {
@@ -32,9 +34,9 @@ exports = Class(ui.ImageView, function (supr) {
 			superview: this,
 			text: 'START',
 			color: 'black',
-			x: 576/2 - 576/4,
-			y: 1024/2 - 1024/8,
-			width: 576/2,
+			x: app_width/2 - app_width/4,
+			y: app_height/2 - app_height/8,
+			width: app_width/2,
 			height: 100
 		});
 

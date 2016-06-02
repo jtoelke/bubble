@@ -4,6 +4,9 @@ import ui.StackView as StackView;
 import src.TitleScreen as TitleScreen;
 import src.GameScreen as GameScreen;
 
+var app_width = 576,
+	app_height = 1024;
+
 exports = Class(GC.Application, function () {
 
 	this.initUI = function () {
@@ -23,10 +26,10 @@ exports = Class(GC.Application, function () {
 			superview: this,
 			x: 0,
 			y: 0,
-			width: 576,
-			height: 1024,
+			width: app_width,
+			height: app_height,
 			clip: true,
-			scale: device.width / 576
+			scale: device.width / app_width
 		});
 
 		rootView.push(titlescreen);
