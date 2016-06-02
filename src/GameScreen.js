@@ -12,7 +12,8 @@ var game_on = false,
 
 var ceiling_img = new Image({url: "resources/images/ui/bg1_header.png"}),
 	cannon_base_img = new Image({url: "resources/images/ui/cannon_base.png"}),
-	cannon_top_img = new Image({url: "resources/images/ui/cannon_top.png"});
+	cannon_top_img = new Image({url: "resources/images/ui/cannon_top.png"}),
+	bubble_img = new Image({url: "resources/images/bubbles/ball_blue.png"});
 
 exports = Class(ui.View, function (supr) {
 	this.init = function (opts) {
@@ -55,6 +56,34 @@ exports = Class(ui.View, function (supr) {
 			width: cannon_top_img.getWidth(),
 			height: cannon_top_img.getHeight()
 		});
+
+		var pad = 2;
+		var row_length = 9;
+		var row_amount = 5;
+		var wall_width = 64;
+		var x_offset = -16;
+		var board_length = ceiling_img.getWidth() - 2*wall_width;
+		var bubble_size = board_length/(row_length - pad);
+		var bubble_distance = board_length / row_length;
+		var x_offset_even = wall_width + bubble_size/2;
+		var y_offset = ceiling_img.getHeight() - bubble_size/2;
+
+		this._bubbles = [];
+
+		for (var row = 0; row < row_amount; row++) {
+			for (var col = 0; col < row_length; col++) {
+				var bubble = new ui.ImageView({
+								superview: this,
+								image: bubble_img,
+								x: x_offset + wall_width + (row % 2) * bubble_size/2 + col * bubble_distance,
+								y: y_offset + row * bubble_distance,
+								width: bubble_size,
+								height: bubble_size
+							});
+				this.addSubview(bubble);
+				this._bubbles.push(bubble);
+			}
+		}
 	};
 });
 
