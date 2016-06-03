@@ -77,11 +77,9 @@ exports = Class(ui.View, function (supr) {
 
 			var dest = this.find_destination(point, slope, con);
 
-			dest.x = dest.x - bubble_size/2;
-			dest.y = dest.y - bubble_size/2;
 			console.log("Destination calculated as : " + dest.x + "," + dest.y);
 			var animator = animate(this._current_bubble);
-			animate(this._current_bubble).now({x: dest.x, y: dest.y}, 500);
+			animate(this._current_bubble).now({x: dest.x - bubble_size/2, y: dest.y - bubble_size/2}, 500);
 			animate(this._current_bubble).then({x: current_bubble_x, y: current_bubble_y}, 500);
 		}
 
