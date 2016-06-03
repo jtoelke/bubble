@@ -84,25 +84,19 @@ exports = Class(ui.View, function (supr) {
 		}
 
 		this.find_destination = function (start_pos, slope, con) {
-			var dest_x = start_pos.x;
-			var dest_y = start_pos.y;
-			if (start_pos.x < app_width/2) {		// tapped in the left half of the screen
-				console.log("Left wall.");
-				dest_y = slope * left_wall + con;
-				if (dest_y > ceiling) {
-					dest_x = left_wall;
-				}
-			} else if (start_pos.x > app_width/2) {	// tapped in the right half of the screen
-				console.log("Right wall.");
-				dest_y = slope * right_wall + con;
-				if (dest_y > ceiling) {
-					dest_x = right_wall;
-				}
-			}
-			if (dest_x == start_pos.x) {			// hitting ceiling
-				console.log("Ceiling.");
-				dest_y = ceiling;
-				dest_x = (ceiling - con) / slope;
+			var y_intersect_left = slope * left_wall + con;
+			var y_intersect_right = slope * right_wall + con;
+			var x_intersect_ceiling = (ceiling - con) / slope;
+
+			if (x_intersect_ceiling > left_wall && x_intersect_ceiling < right_wall) {
+				var dest_x = x_intersect_ceiling;
+				var dest_y = ceiling;
+			} else if (y_intersect_left > ceiling && y_intersect_left < bottom && y_intersect_left != start_pos.y) {
+				var dest_x = left_wall;
+				var dest_y = y_intersect_left;
+			} else {
+				var dest_x = right_wall;
+				var dest_y = y_intersect_right;
 			}
 			return dest = new Point({x: dest_x, y: dest_y});
 		}
