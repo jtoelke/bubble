@@ -7,6 +7,7 @@ import ui.TextView;
 import ui.resource.Image as Image;
 
 var game_on = false,
+	bubble_flying = false,
 	game_length = 5000,
 	countdown_secs = game_length / 1000,
 	lang = 'en';
@@ -65,11 +66,14 @@ exports = Class(ui.View, function (supr) {
 		this.on('InputSelect', function (event, point) {
 			console.log("View clicked at position: " + point.x + "," + point.y);
 			if (point.y < bottom) {
-				this.shoot(point);
+				if (!bubble_flying) {
+					this.shoot(point);
+				}
 			}
 		});
 
 		this.shoot = function (point) {
+			bubble_flying = true;
 			var bubble_y = this._current_bubble.style.y + bubble_size/2;
 			var bubble_x = this._current_bubble.style.x + bubble_size/2;
 			var slope = (point.y - bubble_y) / (point.x - bubble_x);
@@ -87,7 +91,9 @@ exports = Class(ui.View, function (supr) {
 				pos = this.find_destination(pos, slope, con);
 				animate(this._current_bubble).then({x: pos.x, y: pos.y}, 500);
 			}
-			animate(this._current_bubble).then({x: current_bubble_x, y: current_bubble_y}, 500);
+			animate(this._current_bubble).then({x: current_bubble_x, y: current_bubble_y}, 500).then(function(){
+						bubble_flying = false;
+					});;
 		}
 
 		this.find_destination = function (start_pos, slope, con) {
