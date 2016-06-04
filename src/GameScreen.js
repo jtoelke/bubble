@@ -119,6 +119,72 @@ exports = Class(ui.View, function (supr) {
 			return dest = new Point({x: dest_x, y: dest_y});
 		}
 
+		this.neighbor_lower_left = function (i) {
+			if (i % (2 * row_length) == 0) {
+				return -1;
+			} else {
+				if (i % (2 * row_length) < row_length) { // uneven row
+					return i + row_length - 1;
+				} else {
+					return i + row_length;
+				}
+			}
+		}
+		this.neighbor_lower_right = function (i) {
+			if (i % (2 * row_length) == (2 * row_length) - 1) {
+				return -1;
+			} else {
+				if (i % (2 * row_length) < row_length) { // uneven row
+					return i + row_length;
+				} else {
+					return i + row_length + 1;
+				}
+			}
+		}
+		this.neighbor_left = function (i) {
+			if (i % row_length == 0) {
+				return -1;
+			} else {
+				return i - 1;
+			}
+		}
+		this.neighbor_right = function (i) {
+			if (i % row_length == row_length - 1) {
+				return -1;
+			} else {
+				return i + 1;
+			}
+		}
+		this.neighbor_upper_left = function (i) {
+			if (i < row_length || i % (2 * row_length) == 0) {
+				return -1;
+			} else {
+				if (i % (2 * row_length) < row_length) { // uneven row
+					return i - row_length - 1;
+				} else {
+					return i - row_length;
+				}
+			}
+		}
+		this.neighbor_upper_right = function (i) {
+			if (i < row_length || i % (2 * row_length) == (2 * row_length) - 1) {
+				return -1;
+			} else {
+				if (i % (2 * row_length) < row_length) { // uneven row
+					return i - row_length;
+				} else {
+					return i - row_length + 1;
+				}
+			}
+		}
+
+		this.get_neighbors = function (i) {
+			return [this.neighbor_upper_left(i), this.neighbor_upper_right(i),
+					this.neighbor_right(i), this.neighbor_lower_right(i),
+					this.neighbor_lower_left(i), this.neighbor_left(i),
+					];
+		}
+
 		this._ceiling = new ui.ImageView({
 			superview: this,
 			image: ceiling_img,
