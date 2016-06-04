@@ -86,8 +86,8 @@ exports = Class(ui.View, function (supr) {
 
 			for (var i = 0; i < 5; i++) {
 				if (pos.y > ceiling) {
-					con = con + 2 * pos.x * slope;
 					slope = -slope;
+					con = pos.y - slope * pos.x;
 					pos = this.find_destination(pos, slope, con);
 					animate(this._current_bubble).then({x: pos.x, y: pos.y}, 500);
 				}
