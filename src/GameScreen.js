@@ -64,9 +64,8 @@ exports = Class(ui.View, function (supr) {
 		this.on('app:start', start_game_flow.bind(this));
 
 		this.on('InputSelect', function (event, point) {
-			console.log("View clicked at position: " + point.x + "," + point.y);
-			if (point.y < bottom) {
-				if (!bubble_flying) {
+			if (!bubble_flying) {
+				if (point.y < bottom) {
 					this.shoot(point);
 				}
 			}
