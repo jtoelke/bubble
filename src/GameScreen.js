@@ -230,26 +230,15 @@ exports = Class(ui.View, function (supr) {
 					];
 		}
 
-		this.create_current_bubble = function () {
-			this._current_bubble = new ui.ImageView({
-									superview: this,
-									image: bubble_img,
-									x: current_bubble_x,
-									y: current_bubble_y,
-									width: bubble_size,
-									height: bubble_size
-								});
-		}
-
-		this.create_next_bubble = function () {
-			this._next_bubble = new ui.ImageView({
-									superview: this,
-									image: bubble_img,
-									x: next_bubble_x,
-									y: next_bubble_y,
-									width: bubble_size,
-									height: bubble_size
-								});
+		this.create_bubble = function (pos) {
+			return new ui.ImageView({
+						superview: this,
+						image: bubble_img,
+						x: pos.x,
+						y: pos.y,
+						width: bubble_size,
+						height: bubble_size
+					});
 		}
 
 		this._ceiling = new ui.ImageView({
@@ -280,26 +269,18 @@ exports = Class(ui.View, function (supr) {
 		this._bubbles = [];
 		var start_row_amount = 5;
 
-		for (var row = 0; row < start_row_amount; row++) {
-			for (var col = 0; col < row_length; col++) {
-				var bubble = new ui.ImageView({
-								superview: this,
-								image: bubble_img,
-								x: x_offset + wall_width + (row % 2) * bubble_size/2 + col * bubble_distance,
-								y: y_offset + row * bubble_distance,
-								width: bubble_size,
-								height: bubble_size
-							});
-				this.addSubview(bubble);
-				this._bubbles.push(bubble);
-			}
+		for (var i = 0; i < start_row_amount * row_length; i++) {
+			var pos = this.pos_by_index(i);
+			var bubble = this.create_bubble(pos);
+			this.addSubview(bubble);
+			this._bubbles.push(bubble);
 		}
-		for (var row = start_row_amount; row < row_max_amount; row++) {
+		for (var i = start_row_amount * row_length; i < row_max_amount * row_length; i++) {
 			this._bubbles.push(null);
 		}
 
-		this.create_current_bubble();
-		this.create_next_bubble();
+		this._current_bubble = this.create_bubble(new Point({x: current_bubble_x, y: current_bubble_y}));
+		this._next_bubble = this.create_bubble(new Point({x: next_bubble_x, y: next_bubble_y}));
 	};
 });
 
