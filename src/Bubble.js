@@ -39,6 +39,8 @@ exports = Class(ui.View, function (supr) {
 		this._animator.then(function(){flying = false;});
 	};
 
+	this.animateLoad = function (x, y) {
+		this._animator.now({x, y}, 200);
 	};
 
 	this.build = function () {

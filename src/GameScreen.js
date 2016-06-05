@@ -111,6 +111,7 @@ exports = Class(ui.View, function (supr) {
 
 			this._current_bubble.set_flying();
 			this._current_bubble.animateShot(waypoints);
+			this._next_bubble.animateLoad(current_bubble_x - next_bubble_x, current_bubble_y - next_bubble_y);
 		}
 
 		this.find_destination = function (start_pos, slope, con) {
