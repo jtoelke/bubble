@@ -1,5 +1,8 @@
 
 import animate;
+import math.geom.Circle as Circle;
+import math.geom.intersect as intersect;
+import math.geom.Line as Line;
 import math.geom.Point as Point;
 import ui.View;
 import ui.ImageView;
@@ -84,8 +87,11 @@ exports = Class(ui.View, function (supr) {
 				var pos = new Point({x: point.x, y: ceiling});
 			}
 
-			console.log("Destination calculated as : " + dest.x + "," + dest.y);
-			var animator = animate(this._current_bubble);
+			var new_dest = this.check_bubble_hit(new Line(bubble_x, bubble_y, pos.x, pos.y));
+			if (new_dest != null) {
+				animate(this._current_bubble).now({x: new_dest.x - bubble_size/2, y: new_dest.y - bubble_size/2}, 500).then(function(){bubble_flying = false;});
+				return;
+			}
 			animate(this._current_bubble).now({x: dest.x - bubble_size/2, y: dest.y - bubble_size/2}, 500);
 
 			for (var i = 0; i < 5; i++) {
@@ -93,12 +99,15 @@ exports = Class(ui.View, function (supr) {
 					slope = -slope;
 					con = pos.y - slope * pos.x;
 					pos = this.find_destination(pos, slope, con);
+					// TODO: function?
+					var new_dest = this.check_bubble_hit(new Line(bubble_x, bubble_y, pos.x, pos.y));
+					if (new_dest != null) {
+						animate(this._current_bubble).then({x: new_dest.x - bubble_size/2, y: new_dest.y - bubble_size/2}, 500).then(function(){bubble_flying = false;});
+						return;
+					}
 					animate(this._current_bubble).then({x: pos.x, y: pos.y}, 500);
 				}
 			}
-			animate(this._current_bubble).then({x: current_bubble_x, y: current_bubble_y}, 500).then(function(){
-						bubble_flying = false;
-					});;
 		}
 
 		this.find_destination = function (start_pos, slope, con) {
@@ -119,6 +128,42 @@ exports = Class(ui.View, function (supr) {
 			return dest = new Point({x: dest_x, y: dest_y});
 		}
 
+		this.check_bubble_hit = function (line) {
+			for (var b = this._bubbles.length - 1; b >= 0; b--) {
+				if (this._bubbles[b] == null) {
+					continue;
+				}
+				var bubble_pos = this.pos_by_index(b);
+				var bubble_circle = new Circle(bubble_pos.x + bubble_size/2, bubble_pos.y + bubble_size/2, bubble_size/2);
+				if (intersect.circleAndLine(bubble_circle, line)) {
+					neigh = this.get_neighbors(b);
+					var intersecting_neigh = [];
+					for (var n = 0; n < 6; n++) {
+						if (neigh[n] != -1 && this._bubbles[neigh[n]] == null) { // neighbor position exists and is empty
+							bubble_circle = new Circle(this._bubbles[n].x + bubble_size/2, this._bubbles[n].y + bubble_size/2, bubble_size/2);
+							if (intersect.circleAndLine(bubble_circle, line)) {
+								intersecting_neigh.push(neigh[n]);
+							}
+						}
+					}
+					var closest_empty_neigh = intersecting_neigh[0];
+					var closest_dist = 2 * app_height;
+					for (var i = 0; i < intersecting_neigh.length; i++) {
+						var empty_pos = this.pos_by_index(i);
+						dist_x = line.start.x - empty_pos.x + bubble_size/2;
+						dist_y = line.start.y - empty_pos.y + bubble_size/2;
+						var dist = Math.sqrt(dist_x * dist_x + dist_y * dist_y);
+						if (dist < closest_dist) {
+							closest_dist = dist;
+							closest_empty_neigh = intersecting_neigh[i];
+						}
+					}
+					var neigh_pos = this.pos_by_index(closest_empty_neigh);
+					return new Point({x: neigh_pos.x + bubble_size/2, y: neigh_pos.y + bubble_size/2});
+				}
+			}
+			return null;
+		}
 		this.neighbor_lower_left = function (i) {
 			if (i % (2 * row_length) == 0) {
 				return -1;
