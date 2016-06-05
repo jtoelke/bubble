@@ -164,6 +164,7 @@ exports = Class(ui.View, function (supr) {
 						}
 					}
 					var neigh_pos = this.pos_by_index(closest_empty_neigh);
+					this._bubbles[closest_empty_neigh] = this._current_bubble;
 					return new Point({x: neigh_pos.x + bubble_size/2, y: neigh_pos.y + bubble_size/2});
 				}
 			}
@@ -171,7 +172,7 @@ exports = Class(ui.View, function (supr) {
 			if (line.end.y == ceiling) {
 				var index = Math.floor((line.end.x - left_wall) / bubble_distance);
 				var pos = this.pos_by_index(index);
-				this._bubbles[pos] = this._current_bubble;
+				this._bubbles[index] = this._current_bubble;
 				return new Point({x: pos.x + bubble_size/2, y: pos.y + bubble_size/2});
 			} else {
 				return null;
