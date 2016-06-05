@@ -12,7 +12,6 @@ import ui.resource.Image as Image;
 import src.Bubble as Bubble;
 
 var game_on = false,
-	bubble_flying = false,
 	game_length = 5000,
 	countdown_secs = game_length / 1000,
 	lang = 'en';
@@ -68,7 +67,7 @@ exports = Class(ui.View, function (supr) {
 		this.on('app:start', start_game_flow.bind(this));
 
 		this.on('InputSelect', function (event, point) {
-			if (!this._current_bubble.flying) {
+			if (!this._current_bubble.is_flying()) {
 				if (point.y < bottom) {
 					this.shoot(point);
 				}
@@ -111,6 +110,7 @@ exports = Class(ui.View, function (supr) {
 				}
 			}
 
+			this._current_bubble.set_flying();
 			this._current_bubble.animateShot(waypoints);
 		}
 

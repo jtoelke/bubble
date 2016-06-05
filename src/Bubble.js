@@ -9,6 +9,8 @@ var bubble_blue_img = new Image({url: "resources/images/bubbles/ball_blue.png"})
 	bubble_red_img = new Image({url: "resources/images/bubbles/ball_red.png"}),
 	bubble_yellow_img = new Image({url: "resources/images/bubbles/ball_yellow.png"});
 
+var flying = false;;
+
 exports = Class(ui.View, function (supr) {
 
 	this.init = function (opts) {
@@ -17,18 +19,26 @@ exports = Class(ui.View, function (supr) {
 			height:	opts
 		}]);
 		this.size = opts;
-		this.flying = false;
 		this.build();
 	};
 
+	this.is_flying = function () {
+		return flying;
+	}
+
+	this.set_flying = function () {
+		flying = true;
+	}
+
 	this.animateShot = function (waypoints) {
-		this.flying = true;
 		for (var i = 0; i < waypoints.length; i++) {
 			var x = waypoints[i].x - this.size/2 - this.style.x;
 			var y = waypoints[i].y - this.size/2 - this.style.y;
 			this._animator.then({x, y}, 500);
 		}
-		this._animator.then(function(){bubble_flying = false;});
+		this._animator.then(function(){flying = false;});
+	};
+
 	};
 
 	this.build = function () {
