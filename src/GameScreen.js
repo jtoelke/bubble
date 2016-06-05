@@ -164,6 +164,15 @@ exports = Class(ui.View, function (supr) {
 			}
 			return null;
 		}
+
+		this.pos_by_index = function (i) {
+			var row = Math.floor(i / row_length);
+			var col = i % row_length;
+			var pos_x = x_offset + wall_width + (row % 2) * bubble_size/2 + col * bubble_distance;
+			var pos_y = y_offset + row * bubble_distance;
+			return new Point({x: pos_x, y: pos_y});
+		}
+
 		this.neighbor_lower_left = function (i) {
 			if (i % (2 * row_length) == 0) {
 				return -1;
