@@ -185,6 +185,28 @@ exports = Class(ui.View, function (supr) {
 					];
 		}
 
+		this.create_current_bubble = function () {
+			this._current_bubble = new ui.ImageView({
+									superview: this,
+									image: bubble_img,
+									x: current_bubble_x,
+									y: current_bubble_y,
+									width: bubble_size,
+									height: bubble_size
+								});
+		}
+
+		this.create_next_bubble = function () {
+			this._next_bubble = new ui.ImageView({
+									superview: this,
+									image: bubble_img,
+									x: next_bubble_x,
+									y: next_bubble_y,
+									width: bubble_size,
+									height: bubble_size
+								});
+		}
+
 		this._ceiling = new ui.ImageView({
 			superview: this,
 			image: ceiling_img,
@@ -227,23 +249,13 @@ exports = Class(ui.View, function (supr) {
 			}
 		}*/
 
-		this._current_bubble = new ui.ImageView({
-								superview: this,
-								image: bubble_img,
-								x: current_bubble_x,
-								y: current_bubble_y,
-								width: bubble_size,
-								height: bubble_size
-							});
+		}
+		for (var row = start_row_amount; row < row_max_amount; row++) {
+			this._bubbles.push(null);
+		}
 
-		this._next_bubble = new ui.ImageView({
-								superview: this,
-								image: bubble_img,
-								x: next_bubble_x,
-								y: next_bubble_y,
-								width: bubble_size,
-								height: bubble_size
-							});
+		this.create_current_bubble();
+		this.create_next_bubble();
 	};
 });
 
