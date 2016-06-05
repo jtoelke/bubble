@@ -21,7 +21,7 @@ var app_width = 576,
 	app_height = 1024;
 
 var row_length = 9,
-	row_amount = 5;
+	row_max_amount = 14;
 
 var wall_width = 64,
 	left_wall = wall_width,
@@ -231,10 +231,11 @@ exports = Class(ui.View, function (supr) {
 			width: cannon_top_img.getWidth(),
 			height: cannon_top_img.getHeight()
 		});
-/*
-		this._bubbles = [];
 
-		for (var row = 0; row < row_amount; row++) {
+		this._bubbles = [];
+		var start_row_amount = 5;
+
+		for (var row = 0; row < start_row_amount; row++) {
 			for (var col = 0; col < row_length; col++) {
 				var bubble = new ui.ImageView({
 								superview: this,
@@ -247,8 +248,6 @@ exports = Class(ui.View, function (supr) {
 				this.addSubview(bubble);
 				this._bubbles.push(bubble);
 			}
-		}*/
-
 		}
 		for (var row = start_row_amount; row < row_max_amount; row++) {
 			this._bubbles.push(null);
