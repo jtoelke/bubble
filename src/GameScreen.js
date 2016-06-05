@@ -116,8 +116,8 @@ exports = Class(ui.View, function (supr) {
 		}
 
 		this.find_destination = function (start_pos, slope, con) {
-			var y_intersect_left = slope * left_wall + con;
-			var y_intersect_right = slope * right_wall + con;
+			var y_intersect_left = slope * (left_wall + bubble_size/2) + con;
+			var y_intersect_right = slope * (right_wall - bubble_size/2) + con;
 			var x_intersect_ceiling = (ceiling - con) / slope;
 
 			if (x_intersect_ceiling > left_wall && x_intersect_ceiling < right_wall) {
