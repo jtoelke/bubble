@@ -139,13 +139,14 @@ exports = Class(ui.View, function (supr) {
 					continue;
 				}
 				var bubble_pos = this.pos_by_index(b);
-				var bubble_circle = new Circle(bubble_pos.x + bubble_size/2, bubble_pos.y + bubble_size/2, bubble_size/2);
+				var bubble_circle = new Circle(bubble_pos.x + bubble_size/2, bubble_pos.y + bubble_size/2, bubble_size/2 + bubble_size/4);
+				// bubble_size/4 to correct the shot bubble being looked at as going with its center on a line
 				if (intersect.circleAndLine(bubble_circle, line)) {
 					neigh = this.get_neighbors(b);
 					var intersecting_neigh = [];
 					for (var n = 0; n < 6; n++) {
 						if (neigh[n] != -1 && this._bubbles[neigh[n]] == null) { // neighbor position exists and is empty
-							bubble_circle = new Circle(this._bubbles[n].x + bubble_size/2, this._bubbles[n].y + bubble_size/2, bubble_size/2);
+							bubble_circle = new Circle(this._bubbles[n].x + bubble_size/2, this._bubbles[n].y + bubble_size/2, bubble_size/2 + bubble_size/4);
 							if (intersect.circleAndLine(bubble_circle, line)) {
 								intersecting_neigh.push(neigh[n]);
 							}
