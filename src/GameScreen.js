@@ -9,6 +9,8 @@ import ui.ImageView;
 import ui.TextView;
 import ui.resource.Image as Image;
 
+import src.Bubble as Bubble;
+
 var game_on = false,
 	bubble_flying = false,
 	game_length = 5000,
@@ -17,8 +19,7 @@ var game_on = false,
 
 var ceiling_img = new Image({url: "resources/images/ui/bg1_header.png"}),
 	cannon_base_img = new Image({url: "resources/images/ui/cannon_base.png"}),
-	cannon_top_img = new Image({url: "resources/images/ui/cannon_top.png"}),
-	bubble_img = new Image({url: "resources/images/bubbles/ball_blue.png"});
+	cannon_top_img = new Image({url: "resources/images/ui/cannon_top.png"});
 
 var app_width = 576,
 	app_height = 1024;
@@ -67,7 +68,7 @@ exports = Class(ui.View, function (supr) {
 		this.on('app:start', start_game_flow.bind(this));
 
 		this.on('InputSelect', function (event, point) {
-			if (!bubble_flying) {
+			if (!this._current_bubble.flying) {
 				if (point.y < bottom) {
 					this.shoot(point);
 				}
@@ -75,9 +76,9 @@ exports = Class(ui.View, function (supr) {
 		});
 
 		this.shoot = function (point) {
-			bubble_flying = true;
-			var bubble_y = this._current_bubble.style.y + bubble_size/2;
+			waypoints = [];
 			var bubble_x = this._current_bubble.style.x + bubble_size/2;
+			var bubble_y = this._current_bubble.style.y + bubble_size/2;
 
 			if (point.x - bubble_x != 0) {
 				var slope = (point.y - bubble_y) / (point.x - bubble_x);
@@ -87,27 +88,30 @@ exports = Class(ui.View, function (supr) {
 				var pos = new Point({x: point.x, y: ceiling});
 			}
 
-			var new_dest = this.check_bubble_hit(new Line(bubble_x, bubble_y, pos.x, pos.y));
-			if (new_dest != null) {
-				animate(this._current_bubble).now({x: new_dest.x - bubble_size/2, y: new_dest.y - bubble_size/2}, 500).then(function(){bubble_flying = false;});
-				return;
-			}
-			animate(this._current_bubble).now({x: dest.x - bubble_size/2, y: dest.y - bubble_size/2}, 500);
-
-			for (var i = 0; i < 5; i++) {
-				if (pos.y > ceiling) {
-					slope = -slope;
-					con = pos.y - slope * pos.x;
-					pos = this.find_destination(pos, slope, con);
-					// TODO: function?
-					var new_dest = this.check_bubble_hit(new Line(bubble_x, bubble_y, pos.x, pos.y));
-					if (new_dest != null) {
-						animate(this._current_bubble).then({x: new_dest.x - bubble_size/2, y: new_dest.y - bubble_size/2}, 500).then(function(){bubble_flying = false;});
-						return;
+			var hit_dest = this.check_bubble_hit(new Line(bubble_x, bubble_y, pos.x, pos.y));
+			if (hit_dest != null) {
+				waypoints.push(new Point({x: hit_dest.x, y: hit_dest.y}));
+			} else {
+				waypoints.push(pos);
+				var bubble_x = pos.x;
+				var bubble_y = pos.y;
+				for (var i = 0; i < 5; i++) {
+					if (pos.y > ceiling) {
+						slope = -slope;
+						con = pos.y - slope * pos.x;
+						pos = this.find_destination(pos, slope, con);
+						var hit_dest = this.check_bubble_hit(new Line(bubble_x, bubble_y, pos.x, pos.y));
+						if (hit_dest != null) {
+							waypoints.push(hit_dest);
+							break;
+						} else {
+							waypoints.push(pos);
+						}
 					}
-					animate(this._current_bubble).then({x: pos.x, y: pos.y}, 500);
 				}
 			}
+
+			this._current_bubble.animateShot(waypoints);
 		}
 
 		this.find_destination = function (start_pos, slope, con) {
@@ -239,17 +243,6 @@ exports = Class(ui.View, function (supr) {
 					];
 		}
 
-		this.create_bubble = function (pos) {
-			return new ui.ImageView({
-						superview: this,
-						image: bubble_img,
-						x: pos.x,
-						y: pos.y,
-						width: bubble_size,
-						height: bubble_size
-					});
-		}
-
 		this._ceiling = new ui.ImageView({
 			superview: this,
 			image: ceiling_img,
@@ -280,7 +273,9 @@ exports = Class(ui.View, function (supr) {
 
 		for (var i = 0; i < start_row_amount * row_length; i++) {
 			var pos = this.pos_by_index(i);
-			var bubble = this.create_bubble(pos);
+			var bubble = new Bubble(bubble_size);
+			bubble.style.x = pos.x;
+			bubble.style.y = pos.y;
 			this.addSubview(bubble);
 			this._bubbles.push(bubble);
 		}
@@ -288,8 +283,15 @@ exports = Class(ui.View, function (supr) {
 			this._bubbles.push(null);
 		}
 
-		this._current_bubble = this.create_bubble(new Point({x: current_bubble_x, y: current_bubble_y}));
-		this._next_bubble = this.create_bubble(new Point({x: next_bubble_x, y: next_bubble_y}));
+		this._current_bubble = new Bubble(bubble_size);
+		this._current_bubble.style.x = current_bubble_x;
+		this._current_bubble.style.y = current_bubble_y;
+		this.addSubview(this._current_bubble);
+
+		this._next_bubble = new Bubble(bubble_size);
+		this._next_bubble.style.x = next_bubble_x;
+		this._next_bubble.style.y = next_bubble_y;
+		this.addSubview(this._next_bubble);
 	};
 });
 
