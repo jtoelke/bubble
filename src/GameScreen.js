@@ -166,7 +166,15 @@ exports = Class(ui.View, function (supr) {
 					return new Point({x: neigh_pos.x + bubble_size/2, y: neigh_pos.y + bubble_size/2});
 				}
 			}
-			return null;
+			// did not hit any bubble, check if it hits ceiling
+			if (line.end.y == ceiling) {
+				var index = Math.floor((line.end.x - left_wall) / bubble_distance);
+				var pos = this.pos_by_index(index);
+				this._bubbles[pos] = this._current_bubble;
+				return new Point({x: pos.x + bubble_size/2, y: pos.y + bubble_size/2});
+			} else {
+				return null;
+			}
 		}
 
 		this.pos_by_index = function (i) {
