@@ -1,5 +1,4 @@
 
-import animate;
 import math.geom.Circle as Circle;
 import math.geom.intersect as intersect;
 import math.geom.Line as Line;
