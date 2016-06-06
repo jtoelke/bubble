@@ -151,7 +151,8 @@ exports = Class(ui.View, function (supr) {
 					var intersecting_neigh = [];
 					for (var n = 0; n < 6; n++) {
 						if (neigh[n] != -1 && this._bubbles[neigh[n]] == null) { // neighbor position exists and is empty
-							bubble_circle = new Circle(this._bubbles[n].x + bubble_size/2, this._bubbles[n].y + bubble_size/2, bubble_size/2 + bubble_size/4);
+							var pos = this.pos_by_index(neigh[n]);
+							bubble_circle = new Circle(pos.x + bubble_size/2, pos.y + bubble_size/2, bubble_size/2 + bubble_size/4);
 							if (intersect.circleAndLine(bubble_circle, line)) {
 								intersecting_neigh.push(neigh[n]);
 							}
