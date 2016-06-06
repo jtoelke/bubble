@@ -12,7 +12,7 @@ var bubble_blue_img = new Image({url: "resources/images/bubbles/ball_blue.png"})
 
 var colors = ["blue", "green", "purple", "red", "yellow"]
 
-var flying = false;;
+var flying = false;
 
 exports = Class(ui.View, function (supr) {
 
@@ -43,17 +43,18 @@ exports = Class(ui.View, function (supr) {
 			default:
 				return ["yellow", bubble_yellow_img];
 		}
-	}
+	};
 
 	this.is_flying = function () {
 		return flying;
-	}
+	};
 
 	this.set_flying = function () {
 		flying = true;
-	}
+	};
 
-	this.animateShot = function (waypoints) {
+
+	this.animate_shot = function (waypoints) {
 		for (var i = 0; i < waypoints.length; i++) {
 			var x = waypoints[i].x - this.size/2 - this.style.x;
 			var y = waypoints[i].y - this.size/2 - this.style.y;
@@ -62,7 +63,7 @@ exports = Class(ui.View, function (supr) {
 		this._animator.then(function(){flying = false;});
 	};
 
-	this.animateLoad = function (x, y) {
+	this.animate_load = function (x, y) {
 		this._animator.now({x, y}, 200);
 	};
 

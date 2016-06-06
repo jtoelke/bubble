@@ -110,9 +110,9 @@ exports = Class(ui.View, function (supr) {
 			}
 
 			this._current_bubble.set_flying();
-			this.shot_active = true;
-			this._current_bubble.animateShot(waypoints);
-			this._next_bubble.animateLoad(current_bubble_x - next_bubble_x, current_bubble_y - next_bubble_y);
+			this._shot_active = true;
+			this._current_bubble.animate_shot(waypoints);
+			this._next_bubble.animate_load(current_bubble_x - next_bubble_x, current_bubble_y - next_bubble_y);
 
 			var p = waypoints[waypoints.length - 1];
 			p.x -= bubble_size/2;
@@ -331,14 +331,14 @@ exports = Class(ui.View, function (supr) {
 		}
 
 		this.tick = function (dt) {
-			if (this.shot_active) {
+			if (this._shot_active) {
 				if (!this._current_bubble.is_flying()) {
 					this._current_bubble = this._next_bubble;
 					this._next_bubble = new Bubble(bubble_size);
 					this._next_bubble.style.x = next_bubble_x;
 					this._next_bubble.style.y = next_bubble_y;
 					this.addSubview(this._next_bubble);
-					this.shot_active = false;
+					this._shot_active = false;
 				}
 			}
 		};
@@ -393,7 +393,7 @@ exports = Class(ui.View, function (supr) {
 		this._next_bubble.style.y = next_bubble_y;
 		this.addSubview(this._next_bubble);
 
-		this.shot_active = false;
+		this._shot_active = false;
 	};
 });
 
