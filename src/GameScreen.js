@@ -213,43 +213,32 @@ exports = Class(ui.View, function (supr) {
 				return;
 			}
 
-			// for each in to_pop
-				// remove from bubble array
-				// animate popping
+			for (var i = 0; i < to_pop.length; i++) {
+				this.removeSubview(this._bubbles[to_pop[i]]);
+				this._bubbles[to_pop[i]] = null;
+			}
+
+			var connected_bubbles = [];
+			for (var i = 0; i < row_length; i++) {
+				if (this._bubbles[i] != null && connected_bubbles.indexOf(i) == -1) {
+					connected_bubbles = connected_bubbles.concat(this.get_all_connected(i));
+				}
+			}
 
 			var to_drop = []
 			for (var i = 0; i < to_check_drop.length; i++) {
-				if (this.check_drop(to_check_drop[i])) {
-					to_drop.push(to_check_drop[i]);
+				var b = to_check_drop[i];
+				if (connected_bubbles.indexOf(b) == -1 && to_drop.indexOf(b) == -1) {
+					to_drop = to_drop.concat(this.get_all_connected(b));
 				}
 			}
 
-			// for each in to_drop
-				// remove from bubble array
-				// animate dropping
+			for (var i = 0; i < to_drop.length; i++) {
+				this.removeSubview(this._bubbles[to_drop[i]]);
+				this._bubbles[to_drop[i]] = null;
+			}
 		}
 
-		this.check_drop = function (index) {
-			var to_check = []
-			var checked = []
-			to_check.push(index);
-			while (to_check.length > 0) {
-				var b = to_check.pop();
-				var neigh = this.get_neighbors(b);
-				for (var i = 0; i < neigh.length; i++) {
-					if (neigh[i] != -1 && this._bubbles[neigh[i]] != null) {
-						if (neigh[i] < row_length) {
-							return false;
-						}
-						if (to_check.indexOf(neigh[i]) == -1 && checked.indexOf(neigh[i]) == -1) {
-							to_check.push(neigh[i]);
-						}
-					}
-				}
-			checked.push(b);
-			}
-			return true;
-		}
 		this.pos_by_index = function (i) {
 			var row = Math.floor(i / row_length);
 			var col = i % row_length;
@@ -328,6 +317,25 @@ exports = Class(ui.View, function (supr) {
 					this.neighbor_right(i), this.neighbor_lower_right(i),
 					this.neighbor_lower_left(i), this.neighbor_left(i),
 					];
+		}
+
+		this.get_all_connected = function (bubble_index) {
+			var to_check = [];
+			var connected = [];
+			to_check.push(bubble_index);
+			while (to_check.length > 0) {
+				var b = to_check.pop();
+				connected.push(b);
+				var neigh = this.get_neighbors(b);
+				for (var n = 0; n < neigh.length; n++) {
+					if (neigh[n] != -1 && this._bubbles[neigh[n]] != null) {
+						if (to_check.indexOf(neigh[n]) == -1 && connected.indexOf(neigh[n]) == -1) {
+							to_check.push(neigh[n]);
+						}
+					}
+				}
+			}
+			return connected;
 		}
 
 		this.tick = function (dt) {
