@@ -180,6 +180,27 @@ exports = Class(ui.View, function (supr) {
 			}
 		}
 
+		this.check_drop = function (index) {
+			var to_check = []
+			var checked = []
+			to_check.push(index);
+			while (to_check.length > 0) {
+				var b = to_check.pop();
+				var neigh = this.get_neighbors(b);
+				for (var i = 0; i < neigh.length; i++) {
+					if (neigh[i] != -1 && this._bubbles[neigh[i]] != null) {
+						if (neigh[i] < row_length) {
+							return false;
+						}
+						if (to_check.indexOf(neigh[i]) == -1 && checked.indexOf(neigh[i]) == -1) {
+							to_check.push(neigh[i]);
+						}
+					}
+				}
+			checked.push(b);
+			}
+			return true;
+		}
 		this.pos_by_index = function (i) {
 			var row = Math.floor(i / row_length);
 			var col = i % row_length;
