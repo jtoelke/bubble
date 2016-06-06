@@ -171,7 +171,7 @@ exports = Class(ui.View, function (supr) {
 			}
 			// did not hit any bubble, check if it hits ceiling
 			if (line.end.y == ceiling) {
-				var index = Math.floor((line.end.x - left_wall) / bubble_distance);
+				var index = index_by_pos(line.end)
 				var pos = this.pos_by_index(index);
 				this._bubbles[index] = this._current_bubble;
 				return new Point({x: pos.x + bubble_size/2, y: pos.y + bubble_size/2});
@@ -186,6 +186,12 @@ exports = Class(ui.View, function (supr) {
 			var pos_x = x_offset + wall_width + (row % 2) * bubble_size/2 + col * bubble_distance;
 			var pos_y = y_offset + row * bubble_distance;
 			return new Point({x: pos_x, y: pos_y});
+		}
+
+		this.index_by_pos = function (pos) {
+			var row = Math.floor((pos.y - ceiling) / bubble_distance) + 1;
+			var index = row * row_length + Math.floor((pos.x - wall_width - (row % 2) * bubble_size/2) / bubble_distance) + 1;
+			return index;
 		}
 
 		this.neighbor_lower_left = function (i) {
