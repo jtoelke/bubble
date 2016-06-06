@@ -11,8 +11,6 @@ import ui.resource.Image as Image;
 import src.Bubble as Bubble;
 
 var game_on = false,
-	game_length = 5000,
-	countdown_secs = game_length / 1000,
 	lang = 'en';
 
 var ceiling_img = new Image({url: "resources/images/ui/bg1_header.png"}),
@@ -66,7 +64,7 @@ exports = Class(ui.View, function (supr) {
 		this.on('app:start', start_game_flow.bind(this));
 
 		this.on('InputSelect', function (event, point) {
-			if (!this._current_bubble.is_flying()) {
+			if (game_on && !this._current_bubble.is_flying()) {
 				if (point.y < bottom) {
 					this.shoot(point);
 				}
@@ -117,7 +115,11 @@ exports = Class(ui.View, function (supr) {
 			var p = waypoints[waypoints.length - 1];
 			p.x -= bubble_size/2;
 			p.y -= bubble_size/2;
-			this.check_bubble_pop(this.index_by_pos(p));
+			var i = this.index_by_pos(p);
+			var pop = this.check_bubble_pop(i);
+			if (i >= (row_max_amount - 1) * row_length && !pop) {
+				this.end_game_flow("Game over!");
+			}
 		}
 
 		this.find_destination = function (start_pos, slope, con) {
@@ -211,7 +213,7 @@ exports = Class(ui.View, function (supr) {
 				}
 			}
 			if (to_pop.length < 3) {
-				return;
+				return false;
 			}
 
 			for (var i = 0; i < to_pop.length; i++) {
@@ -238,6 +240,8 @@ exports = Class(ui.View, function (supr) {
 				this.removeSubview(this._bubbles[to_drop[i]]);
 				this._bubbles[to_drop[i]] = null;
 			}
+
+			return true;
 		}
 
 		this.pos_by_index = function (i) {
@@ -352,6 +356,24 @@ exports = Class(ui.View, function (supr) {
 			}
 		};
 
+		this.end_game_flow = function (message) {
+			game_on = false;
+			setTimeout(emit_endgame_event.bind(this), 1000);
+			this._endgame_message.setText(message);
+			this._endgame_message.show();
+		}
+
+		this._endgame_message = new ui.TextView({
+			superview: this,
+			text: '',
+			color: 'black',
+			x: app_width/2 - app_width/4,
+			y: app_height/2 - app_height/8,
+			width: app_width/2,
+			height: 100,
+			zIndex: 1
+		});
+
 		this._ceiling = new ui.ImageView({
 			superview: this,
 			image: ceiling_img,
@@ -402,32 +424,13 @@ exports = Class(ui.View, function (supr) {
 		this._next_bubble.style.y = next_bubble_y;
 		this.addSubview(this._next_bubble);
 
+		this._endgame_message.hide();
 		this._shot_active = false;
 	};
 });
 
 function start_game_flow () {
-	var that = this;
 	game_on = true;
-	play_game.call(that);
-}
-
-function play_game () {
-	var i = setInterval(update_countdown.bind(this), 1000);
-
-	setTimeout(bind(this, function () {
-		game_on = false;
-		clearInterval(i);
-		setTimeout(end_game_flow.bind(this), 1000);
-	}), game_length);
-}
-
-function update_countdown () {
-	countdown_secs -= 1;
-}
-
-function end_game_flow () {
-	setTimeout(emit_endgame_event.bind(this), 1000);
 }
 
 function emit_endgame_event () {
@@ -438,5 +441,5 @@ function emit_endgame_event () {
 }
 
 function reset_game () {
-	countdown_secs = game_length / 1000;
+	// TODO
 }
