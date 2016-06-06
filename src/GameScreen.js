@@ -180,6 +180,50 @@ exports = Class(ui.View, function (supr) {
 			}
 		}
 
+		this.check_bubble_pop = function (index) {
+			var to_check = [];
+			var to_pop = [];
+			var to_check_drop = [];
+			to_check.push(index);
+
+			while (to_check.length > 0) {
+				var b = to_check.shift();
+				to_pop.push(b);
+				var neigh = this.get_neighbors(b);
+				for (var i = 0; i < neigh.length; i++) {
+					if (neigh[i] != -1 && this._bubbles[neigh[i]] != null) {
+						if (this._bubbles[neigh[i]].color == this._bubbles[b].color) {
+							if (to_check.indexOf(neigh[i]) == -1 && to_pop.indexOf(neigh[i]) == -1) {
+								to_check.push(neigh[i]);
+							}
+						} else {
+							if (to_check_drop.indexOf(neigh[i]) == -1) {
+								to_check_drop.push(neigh[i]);
+							}
+						}
+					}
+				}
+			}
+			if (to_pop.length < 3) {
+				return;
+			}
+
+			// for each in to_pop
+				// remove from bubble array
+				// animate popping
+
+			var to_drop = []
+			for (var i = 0; i < to_check_drop.length; i++) {
+				if (this.check_drop(to_check_drop[i])) {
+					to_drop.push(to_check_drop[i]);
+				}
+			}
+
+			// for each in to_drop
+				// remove from bubble array
+				// animate dropping
+		}
+
 		this.check_drop = function (index) {
 			var to_check = []
 			var checked = []
