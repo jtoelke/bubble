@@ -23,7 +23,7 @@ var app_width = 576,
 
 var row_length = 9,
 	row_max_amount = 14,
-	start_row_amount = 1;
+	start_row_amount = 2;
 
 var colors = ["blue", "green", "purple", "red", "yellow"];
 
