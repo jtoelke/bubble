@@ -1,0 +1,17 @@
+{
+  "appID": "0ce9718b8dc44e18aeed1366e509e71d",
+  "dependencies": {
+    "devkit-core": "https://github.com/gameclosure/devkit-core#4.5.1"
+  },
+  "shortName": "bubble",
+  "studio": {
+    "domain": "studio.example.com",
+    "name": "Your Studio Name",
+    "stagingDomain": "staging.example.com"
+  },
+  "supportedOrientations": [
+    "portrait",
+    "landscape"
+  ],
+  "title": "bubble"
+}
