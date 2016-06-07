@@ -22,7 +22,8 @@ var app_width = 576,
 	app_height = 1024;
 
 var row_length = 9,
-	row_max_amount = 14;
+	row_max_amount = 14,
+	start_row_amount = 1;
 
 var colors = ["blue", "green", "purple", "red", "yellow"];
 
@@ -64,7 +65,14 @@ exports = Class(ui.View, function (supr) {
 	};
 
 	this.build = function () {
-		this.on('app:start', start_game_flow.bind(this));
+		this.start_game_flow = function () {
+			this.set_field();
+			this._endgame_message.hide();
+			this._shot_active = false;
+			game_on = true;
+		}
+
+		this.on('app:start', this.start_game_flow.bind(this));
 
 		this.on('InputSelect', function (event, point) {
 			if (game_on && !this._current_bubble.is_flying()) {
@@ -405,28 +413,53 @@ exports = Class(ui.View, function (supr) {
 		}
 
 		this.remaining_colors = function () {
-			colors = [];
+			var c = [];
 			if (this._blues > 0) {
-				colors.push("blue");
+				c.push("blue");
 			}
 			if (this._greens > 0) {
-				colors.push("green");
+				c.push("green");
 			}
 			if (this._purples > 0) {
-				colors.push("purple");
+				c.push("purple");
 			}
 			if (this._reds > 0) {
-				colors.push("red");
+				c.push("red");
 			}
 			if (this._yellows > 0) {
-				colors.push("yellow");
+				c.push("yellow");
 			}
-			return colors;
+			return c;
 		}
 
-		this.roll_color = function (colors) {
-			var r = util.random(0, colors.length);
-			return colors[r];
+		this.roll_color = function (col) {
+			var r = util.random(0, col.length);
+			return col[r];
+		}
+
+		this.set_field = function () {
+			for (var i = 0; i < start_row_amount * row_length; i++) {
+				var pos = this.pos_by_index(i);
+				var bubble = new Bubble([bubble_size, this.roll_color(colors)]);
+				bubble.style.x = pos.x;
+				bubble.style.y = pos.y;
+				this.bubble_changed(bubble.color, 1);
+				this.addSubview(bubble);
+				this._bubbles.push(bubble);
+			}
+			for (var i = start_row_amount * row_length; i < row_max_amount * row_length; i++) {
+				this._bubbles.push(null);
+			}
+
+			this._current_bubble = new Bubble([bubble_size, this.roll_color(colors)]);
+			this._current_bubble.style.x = current_bubble_x;
+			this._current_bubble.style.y = current_bubble_y;
+			this.addSubview(this._current_bubble);
+
+			this._next_bubble = new Bubble([bubble_size, this.roll_color(colors)]);
+			this._next_bubble.style.x = next_bubble_x;
+			this._next_bubble.style.y = next_bubble_y;
+			this.addSubview(this._next_bubble);
 		}
 
 		this.tick = function (dt) {
@@ -442,9 +475,36 @@ exports = Class(ui.View, function (supr) {
 			}
 		};
 
+		this.emit_endgame_event = function () {
+			this.once('InputSelect', function () {
+				this.emit('gamescreen:end');
+				this.reset_game.call(this);
+			});
+		}
+
+		this.reset_game = function () {
+			for (var i = 0; i < row_max_amount * row_length; i++) {
+				if (this._bubbles[i] != null) {
+					this.removeSubview(this._bubbles[i]);
+					this._bubbles[i] = null;
+				}
+			}
+			this._blues = 0;
+			this._greens = 0;
+			this._purples = 0;
+			this._reds = 0;
+			this._yellows = 0;
+
+			this.removeSubview(this._current_bubble);
+			this._current_bubble = null;
+
+			this.removeSubview(this._next_bubble);
+			this._next_bubble = null;
+		}
+
 		this.end_game_flow = function (message) {
 			game_on = false;
-			setTimeout(emit_endgame_event.bind(this), 1000);
+			setTimeout(this.emit_endgame_event.bind(this), 1000);
 			this._endgame_message.setText(message);
 			this._endgame_message.show();
 		}
@@ -491,47 +551,6 @@ exports = Class(ui.View, function (supr) {
 		this._reds = 0;
 		this._yellows = 0;
 		this._bubbles = [];
-		var start_row_amount = 5;
 
-		for (var i = 0; i < start_row_amount * row_length; i++) {
-			var pos = this.pos_by_index(i);
-			var bubble = new Bubble([bubble_size, this.roll_color(colors)]);
-			bubble.style.x = pos.x;
-			bubble.style.y = pos.y;
-			this.bubble_changed(bubble.color, 1);
-			this.addSubview(bubble);
-			this._bubbles.push(bubble);
-		}
-		for (var i = start_row_amount * row_length; i < row_max_amount * row_length; i++) {
-			this._bubbles.push(null);
-		}
-
-		this._current_bubble = new Bubble([bubble_size, this.roll_color(colors)]);
-		this._current_bubble.style.x = current_bubble_x;
-		this._current_bubble.style.y = current_bubble_y;
-		this.addSubview(this._current_bubble);
-
-		this._next_bubble = new Bubble([bubble_size, this.roll_color(colors)]);
-		this._next_bubble.style.x = next_bubble_x;
-		this._next_bubble.style.y = next_bubble_y;
-		this.addSubview(this._next_bubble);
-
-		this._endgame_message.hide();
-		this._shot_active = false;
 	};
 });
-
-function start_game_flow () {
-	game_on = true;
-}
-
-function emit_endgame_event () {
-	this.once('InputSelect', function () {
-		this.emit('gamescreen:end');
-		reset_game.call(this);
-	});
-}
-
-function reset_game () {
-	// TODO
-}
