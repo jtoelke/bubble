@@ -183,7 +183,10 @@ exports = Class(ui.View, function (supr) {
 			}
 			// did not hit any bubble, check if it hits ceiling
 			if (line.end.y == ceiling) {
-				var index = this.index_by_pos(line.end)
+				var x = line.end.x - bubble_size/2;
+				var y = line.end.y - bubble_size/2;
+				var p = new Point({x, y});
+				var index = this.index_by_pos(p);
 				var pos = this.pos_by_index(index);
 				this._bubbles[index] = this._current_bubble;
 				this.bubble_changed(this._current_bubble.color, 1);
