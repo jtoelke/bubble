@@ -117,6 +117,9 @@ exports = Class(ui.View, function (supr) {
 			p.y -= bubble_size/2;
 			var i = this.index_by_pos(p);
 			var pop = this.check_bubble_pop(i);
+			if (pop && !this.has_bubbles()) {
+				this.end_game_flow("You won!");
+			}
 			if (i >= (row_max_amount - 1) * row_length && !pop) {
 				this.end_game_flow("Game over!");
 			}
@@ -174,6 +177,7 @@ exports = Class(ui.View, function (supr) {
 					}
 					var neigh_pos = this.pos_by_index(closest_empty_neigh);
 					this._bubbles[closest_empty_neigh] = this._current_bubble;
+					this.bubble_changed(this._current_bubble.color, 1);
 					return new Point({x: neigh_pos.x + bubble_size/2, y: neigh_pos.y + bubble_size/2});
 				}
 			}
@@ -182,6 +186,7 @@ exports = Class(ui.View, function (supr) {
 				var index = this.index_by_pos(line.end)
 				var pos = this.pos_by_index(index);
 				this._bubbles[index] = this._current_bubble;
+				this.bubble_changed(this._current_bubble.color, 1);
 				return new Point({x: pos.x + bubble_size/2, y: pos.y + bubble_size/2});
 			} else {
 				return null;
@@ -217,6 +222,7 @@ exports = Class(ui.View, function (supr) {
 			}
 
 			for (var i = 0; i < to_pop.length; i++) {
+				this.bubble_changed(this._bubbles[to_pop[i]].color, -1);
 				this.removeSubview(this._bubbles[to_pop[i]]);
 				this._bubbles[to_pop[i]] = null;
 			}
@@ -237,6 +243,7 @@ exports = Class(ui.View, function (supr) {
 			}
 
 			for (var i = 0; i < to_drop.length; i++) {
+				this.bubble_changed(this._bubbles[to_drop[i]].color, -1);
 				this.removeSubview(this._bubbles[to_drop[i]]);
 				this._bubbles[to_drop[i]] = null;
 			}
@@ -343,10 +350,59 @@ exports = Class(ui.View, function (supr) {
 			return connected;
 		}
 
+		this.has_color = function (color) {
+			switch (color) {
+				case "blue":
+					if (this._blues > 0)
+					return true;
+				case "green":
+					if (this._greens > 0)
+					return true;
+				case "purple":
+					if (this._purples > 0)
+					return true;
+				case "red":
+					if (this._reds > 0)
+					return true;
+				case "yellow":
+					if (this._yellows > 0)
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		this.has_bubbles = function () {
+			return (this._blues + this._greens + this._purples + this._reds + this._yellows) > 0;
+		}
+
+		this.bubble_changed = function (color, diff) {
+			switch (color) {
+				case "blue":
+					this._blues += diff;
+					break;
+				case "green":
+					this._greens += diff;
+					break;
+				case "purple":
+					this._purples += diff;
+					break;
+				case "red":
+					this._reds += diff;
+					break;
+				case "yellow":
+					this._yellows += diff;
+					break;
+				default:
+					console.log("Color " + color + " does not exist.");
+			}
+		}
+
 		this.tick = function (dt) {
 			if (this._shot_active) {
 				if (!this._current_bubble.is_flying()) {
 					this._current_bubble = this._next_bubble;
+					// TODO: only generate bubbles of the existing colors
 					this._next_bubble = new Bubble(bubble_size);
 					this._next_bubble.style.x = next_bubble_x;
 					this._next_bubble.style.y = next_bubble_y;
@@ -399,6 +455,11 @@ exports = Class(ui.View, function (supr) {
 			height: cannon_top_img.getHeight()
 		});
 
+		this._blues = 0;
+		this._greens = 0;
+		this._purples = 0;
+		this._reds = 0;
+		this._yellows = 0;
 		this._bubbles = [];
 		var start_row_amount = 5;
 
@@ -407,6 +468,7 @@ exports = Class(ui.View, function (supr) {
 			var bubble = new Bubble(bubble_size);
 			bubble.style.x = pos.x;
 			bubble.style.y = pos.y;
+			this.bubble_changed(bubble.color, 1);
 			this.addSubview(bubble);
 			this._bubbles.push(bubble);
 		}
