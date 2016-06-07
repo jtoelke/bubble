@@ -1,5 +1,4 @@
 import animate;
-import math.util as util;
 import ui.View;
 import ui.ImageView;
 import ui.resource.Image as Image;
@@ -18,30 +17,30 @@ exports = Class(ui.View, function (supr) {
 
 	this.init = function (opts) {
 		supr(this, 'init', [{
-			width:	opts,
-			height:	opts
+			width:	opts[0],
+			height:	opts[0]
 		}]);
-		this.size = opts;
-		var color_info = this.generate_color();
-		this.color = color_info[0];
-		this.image = color_info[1];
+		this.size = opts[0];
+		this.color = opts[1];
+		this.image = this.get_image(this.color);
 		this.build();
 	};
 
-	this.generate_color = function () {
-		var r = util.random(0, 5);
-		switch (r) {
-			case 0:
-				return ["blue", bubble_blue_img];
-			case 1:
-				return ["green", bubble_green_img];
-			case 2:
-				return ["purple", bubble_purple_img];
-			case 3:
-				return ["red", bubble_red_img];
-			case 4:
+	this.get_image = function (color) {
+		switch (color) {
+			case "blue":
+				return bubble_blue_img;
+			case "green":
+				return bubble_green_img;
+			case "purple":
+				return bubble_purple_img;
+			case "red":
+				return bubble_red_img;
+			case "yellow":
+				return bubble_yellow_img;
 			default:
-				return ["yellow", bubble_yellow_img];
+				console.log("Error in Bubble creation: Color " + color + " does not exist.")
+				return bubble_blue_img;
 		}
 	};
 

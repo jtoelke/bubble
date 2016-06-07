@@ -3,6 +3,7 @@ import math.geom.Circle as Circle;
 import math.geom.intersect as intersect;
 import math.geom.Line as Line;
 import math.geom.Point as Point;
+import math.util as util;
 import ui.View;
 import ui.ImageView;
 import ui.TextView;
@@ -22,6 +23,8 @@ var app_width = 576,
 
 var row_length = 9,
 	row_max_amount = 14;
+
+var colors = ["blue", "green", "purple", "red", "yellow"];
 
 var wall_width = 64,
 	left_wall = wall_width,
@@ -401,12 +404,36 @@ exports = Class(ui.View, function (supr) {
 			}
 		}
 
+		this.remaining_colors = function () {
+			colors = [];
+			if (this._blues > 0) {
+				colors.push("blue");
+			}
+			if (this._greens > 0) {
+				colors.push("green");
+			}
+			if (this._purples > 0) {
+				colors.push("purple");
+			}
+			if (this._reds > 0) {
+				colors.push("red");
+			}
+			if (this._yellows > 0) {
+				colors.push("yellow");
+			}
+			return colors;
+		}
+
+		this.roll_color = function (colors) {
+			var r = util.random(0, colors.length);
+			return colors[r];
+		}
+
 		this.tick = function (dt) {
 			if (this._shot_active) {
 				if (!this._current_bubble.is_flying()) {
 					this._current_bubble = this._next_bubble;
-					// TODO: only generate bubbles of the existing colors
-					this._next_bubble = new Bubble(bubble_size);
+					this._next_bubble = new Bubble([bubble_size, this.roll_color(this.remaining_colors())]);
 					this._next_bubble.style.x = next_bubble_x;
 					this._next_bubble.style.y = next_bubble_y;
 					this.addSubview(this._next_bubble);
@@ -468,7 +495,7 @@ exports = Class(ui.View, function (supr) {
 
 		for (var i = 0; i < start_row_amount * row_length; i++) {
 			var pos = this.pos_by_index(i);
-			var bubble = new Bubble(bubble_size);
+			var bubble = new Bubble([bubble_size, this.roll_color(colors)]);
 			bubble.style.x = pos.x;
 			bubble.style.y = pos.y;
 			this.bubble_changed(bubble.color, 1);
@@ -479,12 +506,12 @@ exports = Class(ui.View, function (supr) {
 			this._bubbles.push(null);
 		}
 
-		this._current_bubble = new Bubble(bubble_size);
+		this._current_bubble = new Bubble([bubble_size, this.roll_color(colors)]);
 		this._current_bubble.style.x = current_bubble_x;
 		this._current_bubble.style.y = current_bubble_y;
 		this.addSubview(this._current_bubble);
 
-		this._next_bubble = new Bubble(bubble_size);
+		this._next_bubble = new Bubble([bubble_size, this.roll_color(colors)]);
 		this._next_bubble.style.x = next_bubble_x;
 		this._next_bubble.style.y = next_bubble_y;
 		this.addSubview(this._next_bubble);
