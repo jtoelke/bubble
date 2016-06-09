@@ -57,13 +57,13 @@ exports = Class(ui.View, function (supr) {
 		for (var i = 0; i < waypoints.length; i++) {
 			var x = waypoints[i].x - this.size/2 - this.style.x;
 			var y = waypoints[i].y - this.size/2 - this.style.y;
-			this._animator.then({x, y}, 500);
+			this._animator.then({x, y}, 250, animate.linear);
 		}
 		this._animator.then(function(){flying = false;});
 	};
 
 	this.animate_load = function (x, y) {
-		this._animator.now({x, y}, 200);
+		this._animator.now({x, y}, 200, animate.linear);
 	};
 
 	this.build = function () {

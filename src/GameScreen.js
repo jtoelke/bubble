@@ -11,6 +11,8 @@ import ui.resource.Image as Image;
 
 import src.Bubble as Bubble;
 
+import animate;
+
 var game_on = false,
 	lang = 'en';
 
@@ -237,7 +239,14 @@ exports = Class(ui.View, function (supr) {
 
 			for (var i = 0; i < to_pop.length; i++) {
 				this.bubble_changed(this._bubbles[to_pop[i]].color, -1);
-				this.removeSubview(this._bubbles[to_pop[i]]);
+				// this.removeSubview(this._bubbles[to_pop[i]]);
+				animate(this._bubbles[to_pop[i]])
+					.wait(500)
+					.then({opacity:0}, 300, animate.easeIn)
+					.then( (function() {
+						this.removeFromSuperview();
+					}).bind(this._bubbles[to_pop[i]]));
+
 				this._bubbles[to_pop[i]] = null;
 			}
 
@@ -258,7 +267,13 @@ exports = Class(ui.View, function (supr) {
 
 			for (var i = 0; i < to_drop.length; i++) {
 				this.bubble_changed(this._bubbles[to_drop[i]].color, -1);
-				this.removeSubview(this._bubbles[to_drop[i]]);
+				animate(this._bubbles[to_drop[i]])
+					.wait(700)
+					.then({y:10000}, 1500, animate.easeIn)
+					.then( (function() {
+						this.removeFromSuperview();
+					}).bind(this._bubbles[to_drop[i]]));
+
 				this._bubbles[to_drop[i]] = null;
 			}
 
@@ -443,6 +458,7 @@ exports = Class(ui.View, function (supr) {
 				var bubble = new Bubble([bubble_size, this.roll_color(colors)]);
 				bubble.style.x = pos.x;
 				bubble.style.y = pos.y;
+
 				this.bubble_changed(bubble.color, 1);
 				this.addSubview(bubble);
 				this._bubbles.push(bubble);
