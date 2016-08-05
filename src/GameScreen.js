@@ -72,7 +72,7 @@ exports = Class(ui.View, function (supr) {
 			this._endgame_message.hide();
 			this._shot_active = false;
 			game_on = true;
-		}
+		};
 
 		this.on('app:start', this.start_game_flow.bind(this));
 
@@ -136,7 +136,7 @@ exports = Class(ui.View, function (supr) {
 			if (i >= (row_max_amount - 1) * row_length && !pop) {
 				this.end_game_flow("Game over!");
 			}
-		}
+		};
 
 		this.find_destination = function (start_pos, slope, con) {
 			var y_intersect_left = slope * (left_wall + bubble_size/2) + con;
@@ -154,7 +154,7 @@ exports = Class(ui.View, function (supr) {
 				var dest_y = y_intersect_right;
 			}
 			return dest = new Point({x: dest_x, y: dest_y});
-		}
+		};
 
 		this.check_bubble_hit = function (line) {
 			for (var b = this._bubbles.length - 1; b >= 0; b--) {
@@ -198,7 +198,7 @@ exports = Class(ui.View, function (supr) {
 			if (line.end.y == ceiling) {
 				var x = line.end.x - bubble_size/2;
 				var y = line.end.y - bubble_size/2;
-				var p = new Point({x, y});
+				var p = new Point({x: x, y: y});
 				var index = this.index_by_pos(p);
 				var pos = this.pos_by_index(index);
 				this._bubbles[index] = this._current_bubble;
@@ -207,7 +207,7 @@ exports = Class(ui.View, function (supr) {
 			} else {
 				return null;
 			}
-		}
+		};
 
 		this.check_bubble_pop = function (index) {
 			var to_check = [];
@@ -278,7 +278,7 @@ exports = Class(ui.View, function (supr) {
 			}
 
 			return true;
-		}
+		};
 
 		this.pos_by_index = function (i) {
 			var row = Math.floor(i / row_length);
@@ -286,13 +286,13 @@ exports = Class(ui.View, function (supr) {
 			var pos_x = x_offset + wall_width + (row % 2) * bubble_size/2 + col * bubble_distance;
 			var pos_y = y_offset + row * bubble_distance;
 			return new Point({x: pos_x, y: pos_y});
-		}
+		};
 
 		this.index_by_pos = function (pos) {
 			var row = Math.floor((pos.y - ceiling) / bubble_distance) + 1;
 			var index = row * row_length + Math.floor((pos.x - wall_width - (row % 2) * bubble_size/2) / bubble_distance) + 1;
 			return index;
-		}
+		};
 
 		this.neighbor_lower_left = function (i) {
 			if (i % (2 * row_length) == 0) {
@@ -304,7 +304,7 @@ exports = Class(ui.View, function (supr) {
 					return i + row_length;
 				}
 			}
-		}
+		};
 		this.neighbor_lower_right = function (i) {
 			if (i % (2 * row_length) == (2 * row_length) - 1) {
 				return -1;
@@ -315,21 +315,21 @@ exports = Class(ui.View, function (supr) {
 					return i + row_length + 1;
 				}
 			}
-		}
+		};
 		this.neighbor_left = function (i) {
 			if (i % row_length == 0) {
 				return -1;
 			} else {
 				return i - 1;
 			}
-		}
+		};
 		this.neighbor_right = function (i) {
 			if (i % row_length == row_length - 1) {
 				return -1;
 			} else {
 				return i + 1;
 			}
-		}
+		};
 		this.neighbor_upper_left = function (i) {
 			if (i < row_length || i % (2 * row_length) == 0) {
 				return -1;
@@ -340,7 +340,7 @@ exports = Class(ui.View, function (supr) {
 					return i - row_length;
 				}
 			}
-		}
+		};
 		this.neighbor_upper_right = function (i) {
 			if (i < row_length || i % (2 * row_length) == (2 * row_length) - 1) {
 				return -1;
@@ -351,14 +351,14 @@ exports = Class(ui.View, function (supr) {
 					return i - row_length + 1;
 				}
 			}
-		}
+		};
 
 		this.get_neighbors = function (i) {
 			return [this.neighbor_upper_left(i), this.neighbor_upper_right(i),
 					this.neighbor_right(i), this.neighbor_lower_right(i),
 					this.neighbor_lower_left(i), this.neighbor_left(i),
 					];
-		}
+		};
 
 		this.get_all_connected = function (bubble_index) {
 			var to_check = [];
@@ -377,7 +377,7 @@ exports = Class(ui.View, function (supr) {
 				}
 			}
 			return connected;
-		}
+		};
 
 		this.has_color = function (color) {
 			switch (color) {
@@ -399,11 +399,11 @@ exports = Class(ui.View, function (supr) {
 				default:
 					return false;
 			}
-		}
+		};
 
 		this.has_bubbles = function () {
 			return (this._blues + this._greens + this._purples + this._reds + this._yellows) > 0;
-		}
+		};
 
 		this.bubble_changed = function (color, diff) {
 			switch (color) {
@@ -425,7 +425,7 @@ exports = Class(ui.View, function (supr) {
 				default:
 					console.log("Color " + color + " does not exist.");
 			}
-		}
+		};
 
 		this.remaining_colors = function () {
 			var c = [];
@@ -445,12 +445,12 @@ exports = Class(ui.View, function (supr) {
 				c.push("yellow");
 			}
 			return c;
-		}
+		};
 
 		this.roll_color = function (col) {
 			var r = util.random(0, col.length);
 			return col[r];
-		}
+		};
 
 		this.set_field = function () {
 			for (var i = 0; i < start_row_amount * row_length; i++) {
@@ -476,7 +476,7 @@ exports = Class(ui.View, function (supr) {
 			this._next_bubble.style.x = next_bubble_x;
 			this._next_bubble.style.y = next_bubble_y;
 			this.addSubview(this._next_bubble);
-		}
+		};
 
 		this.tick = function (dt) {
 			if (this._shot_active) {
@@ -523,7 +523,7 @@ exports = Class(ui.View, function (supr) {
 			setTimeout(this.emit_endgame_event.bind(this), 1000);
 			this._endgame_message.setText(message);
 			this._endgame_message.show();
-		}
+		};
 
 		this._endgame_message = new ui.TextView({
 			superview: this,
