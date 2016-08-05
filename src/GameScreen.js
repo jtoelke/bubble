@@ -12,6 +12,7 @@ import ui.resource.Image as Image;
 import src.Bubble as Bubble;
 
 import animate;
+import device;
 
 var game_on = false,
 	lang = 'en';
@@ -22,6 +23,8 @@ var ceiling_img = new Image({url: "resources/images/ui/bg1_header.png"}),
 
 var app_width = 576,
 	app_height = 1024;
+
+app_height = device.height / (device.width / app_width);
 
 var row_length = 9,
 	row_max_amount = 14,
