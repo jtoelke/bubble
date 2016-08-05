@@ -3,6 +3,13 @@
   "dependencies": {
     "devkit-core": "https://github.com/gameclosure/devkit-core#4.5.1"
   },
+  "browser": {
+    "canvas": {
+      "height": 2048,
+      "width": 1536,
+      "useWebGL": true
+    }
+  },
   "shortName": "bubble",
   "studio": {
     "domain": "studio.example.com",
